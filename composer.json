@@ -1,0 +1,27 @@
+{
+    "name": "lechihuy/laravel-shortcode",
+    "description": "Suport shortcode in Laravel framework.",
+    "homepage": "https://github.com/lechihuy/laravel-shortcode",
+    "authors": [
+        {
+            "name": "Lê Chí Huy",
+            "email": "lechihuy1062001@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shortcode\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Shortcode\\ShortcodeServiceProvider"
+            ]
+        }
+    }
+}
