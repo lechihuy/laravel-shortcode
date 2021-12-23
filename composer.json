@@ -21,7 +21,10 @@
         "laravel": {
             "providers": [
                 "Shortcode\\ShortcodeServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Shortcode": "Shortcode\\Facades\\Shortcode"
+            }
         }
     }
 }

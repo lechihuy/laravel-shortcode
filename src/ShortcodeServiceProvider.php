@@ -2,6 +2,8 @@
 
 namespace Shortcode;
 
+use Shortcode\Shortcode;
+use Shortcode\Compilers\ShortcodeCompiler;
 use Illuminate\Support\ServiceProvider;
 
 class ShortcodeServiceProvider extends ServiceProvider
@@ -13,7 +15,32 @@ class ShortcodeServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->registerCompiler();
+        $this->registerShortcode();
+    }
+
+    /**
+     * Register the shortcode compiler.
+     * 
+     * @return void
+     */
+    public function registerCompiler()
+    {
+        $this->app->singleton('shortcode.compiler', function ($app) {
+            return new ShortcodeCompiler();
+        });
+    }
+
+    /**
+     * Register the shortcode.
+     * 
+     * @return void
+     */
+    public function registerShortcode()
+    {
+        $this->app->singleton('shortcode', function ($app) {
+            return new Shortcode($app['shortcode.compiler']);
+        });
     }
 
     /**
@@ -23,6 +50,6 @@ class ShortcodeServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        dump(1);
+        //
     }
 }
