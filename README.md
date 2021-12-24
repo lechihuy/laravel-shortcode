@@ -48,11 +48,11 @@ $shortcode->name
 $shortcode->content
 ```
 
-Ngoài ra, ta có thể truy cập các thuộc tính thông qua `attributes` được khởi tạo từ `Illuminate\View\ComponentAttributeBag`, tham khảo thêm ![tại đây](https://laravel.com/api/8.x/Illuminate/View/ComponentAttributeBag.html)
+Ngoài ra, ta có thể truy cập các thuộc tính thông qua `attributes` được khởi tạo từ `Illuminate\View\ComponentAttributeBag`, tham khảo thêm [tại đây](https://laravel.com/api/8.x/Illuminate/View/ComponentAttributeBag.html)
 
 ```php
 $shortcode->attributes->toHtml()
-$shortcode->attributes->get('src)
+$shortcode->attributes->get('src')
 ```
 
 Ta có thể lấy chuỗi thuộc tính gốc được khai báo trong shortcode
