@@ -200,6 +200,8 @@ class ShortcodeCompiler
             $attributes = ltrim($text);
         }
 
+        if (!$attributes) return [];
+        
         return is_array($attributes) ? $attributes : [$attributes];
     }
 }

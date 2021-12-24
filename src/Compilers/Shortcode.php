@@ -40,6 +40,7 @@ class Shortcode
      * @param  string  $name
      * @param  string  $content
      * @param  array   $attributes
+     * @param  string  $rawAttributes
      * @return void
      */
     public function __construct($name, $content, $attributes = [], $rawAttributes = null)
