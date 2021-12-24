@@ -2,101 +2,51 @@
 
 namespace Shortcode\Compilers;
 
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\View\ComponentAttributeBag;
 
-class Shortcode implements Arrayable
+class Shortcode
 {
     /**
-     * Shortcode name
+     * The shortcode tag name.
      *
      * @var string
      */
-    protected $name;
+    public $name;
 
     /**
-     * Shortcode Attributes
-     *
-     * @var array
-     */
-    protected $attributes = [];
-
-    /**
-     * Shortcode content
+     * The shortcode content.
      *
      * @var string
      */
     public $content;
 
     /**
-     * Constructor
-     *
-     * @param string $name
-     * @param string $content
-     * @param array  $attributes
+     * The shortcode attribute bag.
+     * 
+     * @var ComponentAttributeBag
      */
-    public function __construct($name, $content, $attributes = [])
+    public $attributes;
+
+    /**
+     * The shortcode raw attributes string.
+     * 
+     * @var string
+     */
+    public $rawAttributes;
+
+    /**
+     * Create a new shortcode instance.
+     *
+     * @param  string  $name
+     * @param  string  $content
+     * @param  array   $attributes
+     * @return void
+     */
+    public function __construct($name, $content, $attributes = [], $rawAttributes = null)
     {
         $this->name = $name;
         $this->content = $content;
-        $this->attributes = $attributes;
-    }
-
-    /**
-     * Get html attribute
-     *
-     * @param  string $attribute
-     *
-     * @return string|null
-     */
-    public function get($attribute, $fallback = null)
-    {
-        $value = $this->{$attribute};
-        if (!is_null($value)) {
-            return $attribute . '="' . $value . '"';
-        } elseif (!is_null($fallback)) {
-            return $attribute . '="' . $fallback . '"';
-        }
-    }
-
-    /**
-     * Get shortcode name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Get shortcode attributes
-     *
-     * @return string
-     */
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
-     * Return array of attributes;
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * Dynamically get attributes
-     *
-     * @param  string $param
-     *
-     * @return string|null
-     */
-    public function __get($param)
-    {
-        return isset($this->attributes[$param]) ? $this->attributes[$param] : null;
+        $this->attributes = new ComponentAttributeBag($attributes);
+        $this->rawAttributes = $rawAttributes;
     }
 }

@@ -86,13 +86,13 @@ class ShortcodeCompiler
     /**
      * Render the shortcode to HTML format.
      * 
-     * @param  string  $content
+     * @param  array  $matches
      * @return string
      */
-    public function renderShortcode($match)
+    public function renderShortcode($matches)
     {
         $shortcode = $this->makeShortcode($matches);
-        $name = $shortcode->getName();
+        $name = $shortcode->name;
 
         return call_user_func_array($this->shortcodes[$name], [
             $shortcode,
@@ -124,7 +124,7 @@ class ShortcodeCompiler
 
         return '\\['                         // Opening bracket.
         . '(\\[?)'                           // 1: Optional second opening bracket for escaping shortcodes: [[tag]].
-        . "($shortcodeTagsRegex)"                     // 2: Shortcode name.
+        . "($shortcodeTagsRegex)"            // 2: Shortcode name.
         . '(?![\\w-])'                       // Not followed by word character or hyphen.
         . '('                                // 3: Unroll the loop: Inside the opening shortcode tag.
         .     '[^\\]\\/]*'                   // Not a closing bracket or forward slash.
@@ -160,39 +160,46 @@ class ShortcodeCompiler
      */
     protected function makeShortcode($matches)
     {
-        $attributes = $this->parseAttributes($matches[static::ATTRIBUTES_INDEX]);
+        $rawAttributes = trim($matches[static::SHORTCODE_RAW_ATTRIBUTES_INDEX]);
+        $attributes = $this->parseAttributes($rawAttributes);
+
         return new Shortcode(
-            $matches[2],
-            $this->compile($matches[5]),
-            $attributes
+            $matches[static::SHORTCODE_TAGNAME_INDEX],
+            $this->compile($matches[static::SHORTCODE_RAW_CONTENT_INDEX]),
+            $attributes,
+            $rawAttributes,
         );
     }
 
+    /**
+     * Parse the raw string attribute to array format.
+     * 
+     * @param  string  $text
+     * @return string
+     * @author Wordpress
+     */
     protected function parseAttributes($text)
     {
         $text = htmlspecialchars_decode($text, ENT_QUOTES);
         $attributes = [];
         $pattern = '/(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
         
-        if (preg_match_all($pattern, preg_replace('/[\x{00a0}\x{200b}]+/u', " ", $text), $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                if (!empty($match[1])) { // attribute="value"
-                    $attributes[strtolower($match[1])] = stripcslashes($match[2]);
-                } elseif (!empty($match[3])) {
-                    $attributes[strtolower($match[3])] = stripcslashes($match[4]);
-                } elseif (!empty($match[5])) { // attribute=value
-                    $attributes[strtolower($match[5])] = stripcslashes($match[6]);
-                } elseif (isset($match[7]) && strlen($match[7])) {
-                    $attributes[] = stripcslashes($match[7]);
-                } elseif (isset($match[8])) { // attribute
-                    $attributes[] = stripcslashes($match[8]);
+        if (preg_match_all($pattern, preg_replace('/[\x{00a0}\x{200b}]+/u', " ", $text), $bunchOfmatches, PREG_SET_ORDER)) {
+            foreach ($bunchOfmatches as $matches) {
+                if (!empty($matches[1])) { // attribute="value"
+                    $attributes[strtolower($matches[1])] = stripcslashes($matches[2]);
+                } elseif (!empty($matches[3])) { // attribute='value'
+                    $attributes[strtolower($matches[3])] = stripcslashes($matches[4]);
+                } elseif (!empty($matches[5])) { // attribute=value
+                    $attributes[strtolower($matches[5])] = stripcslashes($matches[6]);
+                } elseif (isset($matches[8])) { // attribute
+                    $attributes[stripcslashes($matches[8])] = true;
                 }
             }
         } else {
             $attributes = ltrim($text);
         }
 
-        // return attributes
         return is_array($attributes) ? $attributes : [$attributes];
     }
 }
